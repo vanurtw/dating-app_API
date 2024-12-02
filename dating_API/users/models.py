@@ -1,5 +1,6 @@
 from django.db import models
-from service.service import loading_category_images
+from service.service import loading_interests_images
+
 
 # Create your models here.
 class TelegramUser(models.Model):
@@ -12,16 +13,16 @@ class TelegramUser(models.Model):
     create_date = models.DateField('дата создания', auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Пользоват. телеграмма'
-        verbose_name_plural = 'Пользоват. телеграмма'
+        verbose_name = 'Пользователи телеграмма'
+        verbose_name_plural = 'Пользователи телеграмма'
 
     def __str__(self):
         return f'{self.username}_{self.id_user}'
 
+
 class Categories(models.Model):
     '''Модель категорий для интересов'''
     title = models.CharField('название', max_length=25)
-    image = models.ImageField('изображение', upload_to=loading_category_images)
     slug = models.CharField(max_length=100)
     create_date = models.DateField('дата создания', auto_now_add=True)
 
@@ -29,6 +30,29 @@ class Categories(models.Model):
         verbose_name = 'Категории интересов'
         verbose_name_plural = 'Категории интересов'
 
+    def __str__(self):
+        return self.title
+
+
+class Interests(models.Model):
+    '''Модель интересов связанных с категориями'''
+    title = models.CharField('название', max_length=25)
+    image = models.ImageField(
+        verbose_name='изображение',
+        upload_to=loading_interests_images
+    )
+    category = models.ForeignKey(
+        Categories,
+        on_delete=models.CASCADE,
+        related_name='interests_categories',
+        verbose_name='Категория'
+    )
+    slug = models.CharField(max_length=100)
+    create_date = models.DateField('дата создания', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Интерес'
+        verbose_name_plural = 'Интересы'
 
     def __str__(self):
         return self.title
