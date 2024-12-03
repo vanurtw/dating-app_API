@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Categories, TelegramUser, Interests, Cities
+from .models import (Categories,
+                     TelegramUser,
+                     Interests,
+                     Cities,
+                     Profile,
+                     )
 
 
 # Register your models here.
@@ -31,3 +36,11 @@ class CitiesAdmin(admin.ModelAdmin):
     list_display_links = ['id', 'title']
     prepopulated_fields = {'slug': ('title',)}
     list_filter = ['create_date']
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user_teleg__username', 'create_date']
+    list_display_links = ['id', 'user_teleg__username']
+    list_filter = ['city', 'create_date']
+

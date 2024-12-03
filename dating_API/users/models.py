@@ -6,10 +6,10 @@ from service.service import loading_interests_images
 # Create your models here.
 class TelegramUser(models.Model):
     '''Модель пользователя телеграмм аккаунта'''
-    id_user = models.IntegerField('id пользов. аккаунта')
+    id_user = models.IntegerField('id пользов. аккаунта телеграмма')
     is_bot = models.BooleanField('бот', default=False)
-    first_name = models.CharField('имя', max_length=100)
-    last_name = models.CharField('фамилия', max_length=100)
+    first_name = models.CharField('имя', max_length=100, blank=True, null=True)
+    last_name = models.CharField('фамилия', max_length=100, blank=True, null=True)
     username = models.CharField('username', max_length=100)
     create_date = models.DateField('дата создания', auto_now_add=True)
 
@@ -59,6 +59,7 @@ class Interests(models.Model):
     def __str__(self):
         return self.title
 
+
 class Cities(models.Model):
     '''Модель городов'''
     title = models.CharField('город', max_length=25)
@@ -69,3 +70,51 @@ class Cities(models.Model):
         verbose_name = 'Города'
         verbose_name_plural = 'Город'
 
+    def __str__(self):
+        return self.title
+
+
+class Profile(models.Model):
+    '''Модель профиля пользователя телеграмм аккаунта'''
+    user_teleg = models.OneToOneField(
+        TelegramUser,
+        on_delete=models.CASCADE,
+        related_name='profile_user_teleg',
+        verbose_name='пользователь телеграм. аккаунта'
+    )
+    city = models.ForeignKey(
+        Cities,
+        on_delete=models.CASCADE,
+        related_name='city_profiles',
+        verbose_name='город'
+    )
+    description = models.CharField(
+        'описание',
+        max_length=300,
+        help_text='расскажи о себе',
+        blank=True,
+        null=True
+    )
+    interests = models.ManyToManyField(
+        Interests,
+        related_name='interest_profiles',
+        verbose_name='интересы',
+        blank=True,
+        null=True
+    )
+    films = models.CharField(
+        'фильмы',
+        max_length=50,
+        blank=True,
+        null=True
+    )
+    books = models.CharField(
+        'книги',
+        max_length=50,
+        blank=True,
+        null=True
+    )
+    create_date = models.DateField('дата создания', auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user_teleg}'
