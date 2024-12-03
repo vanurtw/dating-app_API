@@ -41,8 +41,9 @@ class CitiesAdmin(admin.ModelAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user_teleg__username', 'create_date']
+    list_display = ['id', 'user_teleg__username', 'city', 'gender', 'create_date']
     list_display_links = ['id', 'user_teleg__username']
+    list_editable = ['city', 'gender']
     list_filter = ['city', 'create_date']
 
 @admin.register(ProfileImages)

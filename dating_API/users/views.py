@@ -12,3 +12,9 @@ class TestAPIView(GenericAPIView):
 
     def get(self, *args, **kwargs):
         return Response('ok')
+
+
+class SearchAPIView(GenericAPIView):
+
+    def get(self, *args, **kwargs):
+        return Response('ok')

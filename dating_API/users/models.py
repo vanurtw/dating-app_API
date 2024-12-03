@@ -48,8 +48,10 @@ class Interests(models.Model):
     title = models.CharField('название', max_length=25)
     image = models.ImageField(
         verbose_name='изображение',
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png'])],
-        upload_to=loading_interests_images
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'webp'])],
+        upload_to=loading_interests_images,
+        blank=True,
+        null=True
     )
     category = models.ForeignKey(
         Categories,
@@ -88,12 +90,17 @@ class Profile(models.Model):
     '''
     Модель профиля пользователя телеграмм аккаунта
     '''
+    CHOICES = [
+        ('М', 'Мужской'),
+        ('Ж', 'Женский'),
+    ]
     user_teleg = models.OneToOneField(
         TelegramUser,
         on_delete=models.CASCADE,
         related_name='profile_user_teleg',
         verbose_name='пользователь телеграм. аккаунта'
     )
+    gender = models.CharField(max_length=3, choices=CHOICES, default='М')
     city = models.ForeignKey(
         Cities,
         on_delete=models.CASCADE,
