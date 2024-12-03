@@ -1,6 +1,6 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
-from service.service import loading_interests_images
+from service.service import loading_interests_images, loading_profile_images
 
 
 # Create your models here.
@@ -14,7 +14,7 @@ class TelegramUser(models.Model):
     create_date = models.DateField('дата создания', auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Пользователи телеграмма'
+        verbose_name = 'Пользователя телеграмма'
         verbose_name_plural = 'Пользователи телеграмма'
 
     def __str__(self):
@@ -28,7 +28,7 @@ class Categories(models.Model):
     create_date = models.DateField('дата создания', auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Категории интересов'
+        verbose_name = 'Категорию интереса'
         verbose_name_plural = 'Категории интересов'
 
     def __str__(self):
@@ -67,8 +67,8 @@ class Cities(models.Model):
     slug = models.CharField(max_length=75)
 
     class Meta:
-        verbose_name = 'Города'
-        verbose_name_plural = 'Город'
+        verbose_name = 'Город'
+        verbose_name_plural = 'Города'
 
     def __str__(self):
         return self.title
@@ -118,3 +118,30 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user_teleg}'
+
+    class Meta:
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили'
+
+
+class ProfileImages(models.Model):
+    '''Модель изображений прикрепленных к профилю'''
+    profile = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='profile_images',
+        verbose_name='профиль'
+    )
+    image = models.ImageField(
+        verbose_name='изображение',
+        upload_to=loading_profile_images,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png'])]
+    )
+    create_date = models.DateField('дата создания', auto_now_add=True)
+
+    def __str__(self):
+        return self.profile
+
+    class Meta:
+        verbose_name = 'Изображения профиля'
+        verbose_name_plural = 'Изображение профиля'

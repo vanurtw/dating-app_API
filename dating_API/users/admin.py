@@ -4,6 +4,7 @@ from .models import (Categories,
                      Interests,
                      Cities,
                      Profile,
+                     ProfileImages
                      )
 
 
@@ -43,4 +44,10 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ['id', 'user_teleg__username', 'create_date']
     list_display_links = ['id', 'user_teleg__username']
     list_filter = ['city', 'create_date']
+
+@admin.register(ProfileImages)
+class ProfileImages(admin.ModelAdmin):
+    list_display = ['id', 'profile', 'create_date']
+    list_display_links = ['id', 'profile']
+
 
