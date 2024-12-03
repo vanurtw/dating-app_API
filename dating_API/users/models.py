@@ -5,7 +5,9 @@ from service.service import loading_interests_images, loading_profile_images
 
 # Create your models here.
 class TelegramUser(models.Model):
-    '''Модель пользователя телеграмм аккаунта'''
+    '''
+    Модель пользователя телеграмм аккаунта
+    '''
     id_user = models.CharField('id пользов. аккаунта телеграмма', unique=True, max_length=12)
     is_bot = models.BooleanField('бот', default=False)
     first_name = models.CharField('имя', max_length=100, blank=True, null=True)
@@ -20,9 +22,13 @@ class TelegramUser(models.Model):
     def __str__(self):
         return f'{self.username}_{self.id_user}'
 
+    is_authenticated = True
+
 
 class Categories(models.Model):
-    '''Модель категорий для интересов'''
+    '''
+    Модель категорий для интересов
+    '''
     title = models.CharField('название', max_length=25)
     slug = models.CharField(max_length=100)
     create_date = models.DateField('дата создания', auto_now_add=True)
@@ -36,7 +42,9 @@ class Categories(models.Model):
 
 
 class Interests(models.Model):
-    '''Модель интересов связанных с категориями'''
+    '''
+    Модель интересов связанных с категориями
+    '''
     title = models.CharField('название', max_length=25)
     image = models.ImageField(
         verbose_name='изображение',
@@ -61,7 +69,9 @@ class Interests(models.Model):
 
 
 class Cities(models.Model):
-    '''Модель городов'''
+    '''
+    Модель городов
+    '''
     title = models.CharField('город', max_length=25)
     create_date = models.DateField('дата создания', auto_now_add=True)
     slug = models.CharField(max_length=75)
@@ -75,7 +85,9 @@ class Cities(models.Model):
 
 
 class Profile(models.Model):
-    '''Модель профиля пользователя телеграмм аккаунта'''
+    '''
+    Модель профиля пользователя телеграмм аккаунта
+    '''
     user_teleg = models.OneToOneField(
         TelegramUser,
         on_delete=models.CASCADE,
@@ -125,7 +137,9 @@ class Profile(models.Model):
 
 
 class ProfileImages(models.Model):
-    '''Модель изображений прикрепленных к профилю'''
+    '''
+    Модель изображений прикрепленных к профилю
+    '''
     profile = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,

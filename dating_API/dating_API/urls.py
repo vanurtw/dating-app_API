@@ -21,6 +21,7 @@ from .swagger_urls import urlpatterns_swagger
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('auth_user.urls')),
+    path('api/', include('users.urls')),
 ]
 
 urlpatterns.extend(urlpatterns_swagger)

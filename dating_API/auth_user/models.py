@@ -4,10 +4,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.models import TelegramUser
 
+
 class Token(models.Model):
-    """
+    '''
     Модель токена авторизации по умолчанию.
-    """
+    '''
     key = models.CharField(_("Key"), max_length=40, primary_key=True)
     user = models.OneToOneField(
         TelegramUser, related_name='auth_token',
@@ -31,4 +32,3 @@ class Token(models.Model):
     # objects = models.Manager()
     def __str__(self):
         return self.key
-

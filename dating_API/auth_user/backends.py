@@ -1,12 +1,18 @@
-# class JWTAuthentication(BaseAuthentication):
-#     token = TokenValidate()
-#
-#     def authenticate(self, request):
-#         token = self.token.get_token(request)
-#         if not token:
-#             return (None, None)
-#         self.token.validate_token(token)
-#         payload = self.token.decoding_token(token)
-#         self.token.token_lifetime(payload=payload)
-#         user = get_object_or_404(get_user_model(), id=payload.get('sub'))
-#         return (user, token)
+from django.contrib.auth import get_user_model
+from rest_framework.authentication import BaseAuthentication
+from dating_API.settings import TOKEN_HEADER
+from .models import Token
+
+
+class TokenAuthentication(BaseAuthentication):
+
+    def authenticate(self, request):
+        key = request.META.get('HTTP_AUTHORIZATION', None)
+        if key:
+            key = key.split()[-1]
+        user = get_user_model().objects.all()[0]
+        try:
+            token = Token.objects.get(key=key)
+            return token.user, token
+        except:
+            return None, None
