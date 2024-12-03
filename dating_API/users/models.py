@@ -6,7 +6,7 @@ from service.service import loading_interests_images, loading_profile_images
 # Create your models here.
 class TelegramUser(models.Model):
     '''Модель пользователя телеграмм аккаунта'''
-    id_user = models.IntegerField('id пользов. аккаунта телеграмма')
+    id_user = models.CharField('id пользов. аккаунта телеграмма', unique=True, max_length=12)
     is_bot = models.BooleanField('бот', default=False)
     first_name = models.CharField('имя', max_length=100, blank=True, null=True)
     last_name = models.CharField('фамилия', max_length=100, blank=True, null=True)
