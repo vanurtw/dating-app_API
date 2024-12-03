@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from service.service import loading_interests_images
 
@@ -39,6 +40,7 @@ class Interests(models.Model):
     title = models.CharField('название', max_length=25)
     image = models.ImageField(
         verbose_name='изображение',
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png'])],
         upload_to=loading_interests_images
     )
     category = models.ForeignKey(
@@ -56,3 +58,14 @@ class Interests(models.Model):
 
     def __str__(self):
         return self.title
+
+class Cities(models.Model):
+    '''Модель городов'''
+    title = models.CharField('город', max_length=25)
+    create_date = models.DateField('дата создания', auto_now_add=True)
+    slug = models.CharField(max_length=75)
+
+    class Meta:
+        verbose_name = 'Города'
+        verbose_name_plural = 'Город'
+
