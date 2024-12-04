@@ -15,13 +15,9 @@ class InterestSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    interests = serializers.SerializerMethodField()
+    interests = InterestSerializer(many=True)
     city = serializers.SerializerMethodField()
 
-    def get_interests(self, obj):
-        interests = obj.interests.all()
-        serializer = InterestSerializer(interests, many=True, context=self.context)
-        return serializer.data
 
     def get_city(self, obj):
         return obj.city.title
