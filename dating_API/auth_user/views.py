@@ -8,14 +8,25 @@ from rest_framework.generics import GenericAPIView
 from .serializers import TelegramUserSerializers
 from .models import Token
 from rest_framework import status
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 # Create your views here.
+
+UserSchema = openapi.Schema(type=openapi.TYPE_OBJECT,
+                           properties={'token': openapi.Schema(description='тоекен', type=openapi.TYPE_STRING)})
 
 
 class LoginAPIView(GenericAPIView):
     serializer_class = TelegramUserSerializers
 
+    @swagger_auto_schema(
+        responses={
+            400: openapi.Response(description='Токен уже создан для этого пользователя'),
+            201:openapi.Response(description='Токен создан успешно', schema=UserSchema)
+        }
+
+    )
     def post(self, request):
         try:
             teleg_user = TelegramUser.objects.get(id_user=request.data.get('id_user'))
