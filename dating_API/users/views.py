@@ -1,3 +1,5 @@
+from lib2to3.fixes.fix_input import context
+
 from django.shortcuts import render
 from django.template.context_processors import request
 from rest_framework.generics import GenericAPIView
@@ -22,8 +24,8 @@ class TestAPIView(GenericAPIView):
 
 
 class FormAPIView(GenericAPIView):
-
     serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -33,14 +35,14 @@ class FormAPIView(GenericAPIView):
         ]
 
     )
-    def get(self, request):
-        city = request.GET.get('city')
-        gender = request.GET.get('gender')
-        id = request.GET.get('id')
+    def get(self, request, *args, **kwargs):
+        city = request.GET.get('city', None)
+        gender = request.GET.get('gender', None)
+        id = request.GET.get('id', None)
         user_profile = request.user.profile_user_teleg
-        q = Profile.objects.filter(~Q(id=user_profile.id), ~Q(id=id), city__slug=city, gender=gender)
-        qs = q.filter(interests__in=user_profile.interests.all())
-        qr = random.choices(qs)[0]
-        print(qr.id, len(qs))
-        serializer = self.get_serializer(qr)
+        user_profile_interests = user_profile.interests.all()
+        query_profile = Profile.objects.filter(~Q(id=user_profile.id), ~Q(id=id), city__slug=city, gender=gender)
+        query_profile_filter = query_profile.filter(interests__in=user_profile_interests)
+        profile = random.choices(query_profile_filter)[0]
+        serializer = self.get_serializer(profile, context={'user_profile_interests': user_profile_interests})
         return Response(serializer.data)
