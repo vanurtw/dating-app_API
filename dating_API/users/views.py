@@ -36,12 +36,16 @@ class FormAPIView(GenericAPIView):
 
     )
     def get(self, request, *args, **kwargs):
-        city = request.GET.get('city', 'voronezh')
-        gender = request.GET.get('gender', 'М')
+        city = request.GET.get('city', None)
+        gender = request.GET.get('gender', None)
         id = request.GET.get('id', None)
         user_profile = request.user.profile_user_teleg
         user_profile_interests = user_profile.interests.all()
-        query_profile_filter = Profile.objects.filter(~Q(id=user_profile.id), ~Q(id=id), city__slug=city, gender=gender)
+        query_profile_filter = Profile.objects.filter(~Q(id=user_profile.id), ~Q(id=id))
+        if city:
+            query_profile_filter = query_profile_filter.filter(city__slug=city)
+        if gender:
+            query_profile_filter = query_profile_filter.filter(gender=gender)
         if user_profile_interests:
             query_profile_filter = query_profile_filter.filter(interests__in=user_profile_interests)
             profile = random.choices(query_profile_filter)[0]
