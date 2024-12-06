@@ -3,13 +3,15 @@ from django.db import IntegrityError
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from users.models import TelegramUser
+from users.models import TelegramUser, Profile
 from rest_framework.generics import GenericAPIView
 from .serializers import TelegramUserSerializers
 from .models import Token
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+
 
 # Create your views here.
 
@@ -34,6 +36,7 @@ class LoginAPIView(GenericAPIView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             teleg_user = serializer.save()
+            Profile.objects.create(user_teleg=teleg_user)
         try:
             token = Token.objects.create(user=teleg_user)
         except IntegrityError as ex:

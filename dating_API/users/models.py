@@ -105,7 +105,8 @@ class Profile(models.Model):
         Cities,
         on_delete=models.CASCADE,
         related_name='city_profiles',
-        verbose_name='город'
+        verbose_name='город',
+        blank=True, null=True
     )
     description = models.CharField(
         'описание',
