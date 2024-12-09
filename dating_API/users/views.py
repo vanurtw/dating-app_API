@@ -1,5 +1,3 @@
-
-
 from django.shortcuts import render
 from django.template.context_processors import request
 from rest_framework.generics import GenericAPIView
@@ -29,7 +27,8 @@ class FormAPIView(GenericAPIView):
 
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter('id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id текущей анкеты'),
+            openapi.Parameter('id_result', openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id переданных анкет'),
             openapi.Parameter('city', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='город slug'),
             openapi.Parameter('gender', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='гендер М/Ж')
         ]
@@ -38,18 +37,17 @@ class FormAPIView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         city = request.GET.get('city', None)
         gender = request.GET.get('gender', None)
-        id = request.GET.get('id', None)
+        id_result = request.data.get('id_result')
+        id_find = max(id_result)
         user_profile = request.user.profile_user_teleg
         user_profile_interests = user_profile.interests.all()
-        query_profile_filter = Profile.objects.filter(~Q(id=user_profile.id), ~Q(id=id))
+        query_profile_filter = Profile.objects.filter(~Q(id=user_profile.id), id__gt=id_find)
         if city:
             query_profile_filter = query_profile_filter.filter(city__slug=city)
         if gender:
             query_profile_filter = query_profile_filter.filter(gender=gender)
         if user_profile_interests:
             query_profile_filter = query_profile_filter.filter(interests__in=user_profile_interests)
-            profile = random.choices(query_profile_filter)[0]
-        else:
-            profile = query_profile_filter[0]
-        serializer = self.get_serializer(profile, context={'user_profile_interests': user_profile_interests})
+        profile = query_profile_filter[:10]
+        serializer = self.get_serializer(profile, many=True, context={'user_profile_interests': user_profile_interests})
         return Response(serializer.data)
