@@ -4,7 +4,8 @@ from .models import (Categories,
                      Interests,
                      Cities,
                      Profile,
-                     ProfileImages
+                     ProfileImages,
+                     LikeUser
                      )
 
 
@@ -46,9 +47,13 @@ class ProfileAdmin(admin.ModelAdmin):
     list_editable = ['city', 'gender']
     list_filter = ['city', 'create_date']
 
+
 @admin.register(ProfileImages)
 class ProfileImages(admin.ModelAdmin):
     list_display = ['id', 'profile', 'create_date']
     list_display_links = ['id', 'profile']
 
 
+@admin.register(LikeUser)
+class LikeUserAdmin(admin.ModelAdmin):
+    pass

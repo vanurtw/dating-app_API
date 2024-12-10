@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.template.context_processors import request
 from rest_framework.generics import GenericAPIView
-from rest_framework import permissions
+from rest_framework import permissions, status
 from rest_framework.response import Response
-from .models import Profile,LikeUser
+from .models import Profile, LikeUser
 from .serializers import ProfileSerializer
 import random
 from django.db.models import Q
@@ -69,13 +69,24 @@ class FormAPIView(GenericAPIView):
 class LikeAPIView(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter('id_profile', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id анкеты'),
+            openapi.Parameter('id_profile', openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='id понравившейся анкеты'),
             openapi.Parameter('action', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='действие')
         ]
     )
     def get(self, request, *args, **kwargs):
-        id_profile = request.GET.get('id_profile')
-        action = request.GET.get('action')
+        id_like_profile = request.GET.get('id_profile', None)
+        action = request.GET.get('action', None)
+        if not id_like_profile or not action:
+            return Response({'detail': 'Не переданы параметры запроса'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            likes = request.user.user_teleg_likes.filter(like_profile_id=id_like_profile).exists()
+            if likes:
+                return Response({'detail': 'Вы уже добавили эту анкету в поравившиеся'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            LikeUser.objects.create(user_teleg=request.user, like_profile_id=id_like_profile)
+            return Response({'detail':'анкета дабавлена в понравившиеся'}, status=status.HTTP_201_CREATED)
+        except Exception as ex:
+            return Response({'detail':ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)

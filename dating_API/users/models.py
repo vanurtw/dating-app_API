@@ -170,22 +170,22 @@ class ProfileImages(models.Model):
 
 
 class LikeUser(models.Model):
-    user_profile = models.ForeignKey(
-        Profile,
+    user_teleg = models.ForeignKey(
+        TelegramUser,
         on_delete=models.CASCADE,
-        related_name='user_profile_likes',
+        related_name='user_teleg_likes',
         verbose_name='пользователь'
     )
     like_profile = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
-        related_name='user_profile_liked',
-        verbose_name='понравившийся пользователь'
+        related_name='user_profile_likes',
+        verbose_name='понравившийся профиль пользователя'
     )
     create_date = models.DateField('дата создания', auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user_profile}_like_{self.like_profile}'
+        return f'{self.user_teleg}_like_{self.like_profile}'
 
     class Meta:
         verbose_name = 'Нравиться'
