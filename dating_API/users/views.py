@@ -38,10 +38,12 @@ class FormAPIView(GenericAPIView):
         city = request.GET.get('city', None)
         gender = request.GET.get('gender', None)
         id_result = request.data.get('id_result')
-        id_find = max(id_result)
         user_profile = request.user.profile_user_teleg
         user_profile_interests = user_profile.interests.all()
-        query_profile_filter = Profile.objects.filter(~Q(id=user_profile.id), id__gt=id_find)
+        query_profile_filter = Profile.objects.filter(~Q(id=user_profile.id))
+        if id_result:
+            id_find = max(id_result)
+            query_profile_filter = query_profile_filter.filter(id__gt=id_find)
         if city:
             query_profile_filter = query_profile_filter.filter(city__slug=city)
         if gender:
