@@ -24,7 +24,6 @@ class LoginAPIView(GenericAPIView):
 
     @swagger_auto_schema(
         responses={
-            400: openapi.Response(description='Токен уже создан для этого пользователя'),
             201:openapi.Response(description='Токен создан успешно', schema=UserSchema)
         }
 
@@ -40,5 +39,7 @@ class LoginAPIView(GenericAPIView):
         try:
             token = Token.objects.create(user=teleg_user)
         except IntegrityError as ex:
-            return Response('Токен уже создан для этого пользователя', status=status.HTTP_400_BAD_REQUEST)
+            tkn = Token.objects.get(user=teleg_user)
+            tkn.delete()
+            token = Token.objects.create(user=teleg_user)
         return Response({'token': token.key}, status=status.HTTP_201_CREATED)
