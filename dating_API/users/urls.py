@@ -3,5 +3,6 @@ from .views import TestAPIView, FormAPIView
 
 urlpatterns = [
     path('test/', TestAPIView.as_view()),
-    path('get-form/', FormAPIView.as_view())
+    path('get-form/', FormAPIView.as_view()),
+    # path('like/', )
 ]
