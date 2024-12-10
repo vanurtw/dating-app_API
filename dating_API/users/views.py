@@ -3,7 +3,7 @@ from django.template.context_processors import request
 from rest_framework.generics import GenericAPIView
 from rest_framework import permissions
 from rest_framework.response import Response
-from .models import Profile
+from .models import Profile,LikeUser
 from .serializers import ProfileSerializer
 import random
 from django.db.models import Q
@@ -67,6 +67,9 @@ class FormAPIView(GenericAPIView):
 
 
 class LikeAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('id_profile', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='id анкеты'),

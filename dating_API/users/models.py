@@ -120,13 +120,13 @@ class Profile(models.Model):
         related_name='interest_profiles',
         verbose_name='интересы',
         blank=True,
-        null=True
+        null=True,
     )
     films = models.CharField(
         'фильмы',
         max_length=50,
         blank=True,
-        null=True
+        null=True,
     )
     books = models.CharField(
         'книги',
@@ -167,3 +167,26 @@ class ProfileImages(models.Model):
     class Meta:
         verbose_name = 'Изображения профиля'
         verbose_name_plural = 'Изображение профиля'
+
+
+class LikeUser(models.Model):
+    user_profile = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='user_profile_likes',
+        verbose_name='пользователь'
+    )
+    like_profile = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='user_profile_liked',
+        verbose_name='понравившийся пользователь'
+    )
+    create_date = models.DateField('дата создания', auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user_profile}_like_{self.like_profile}'
+
+    class Meta:
+        verbose_name = 'Нравиться'
+        verbose_name_plural = 'Нравиться'
