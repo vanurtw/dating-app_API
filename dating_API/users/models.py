@@ -105,6 +105,7 @@ class Profile(models.Model):
         related_name='profile_user_teleg',
         verbose_name='пользователь телеграм. аккаунта'
     )
+    age = models.IntegerField('возраст', blank=True, null=True)
     gender = models.CharField(max_length=3, choices=CHOICES, default='М')
     city = models.ForeignKey(
         Cities,

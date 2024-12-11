@@ -80,7 +80,7 @@ class LikeAPIView(GenericAPIView):
     )
     def get(self, request, *args, **kwargs):
         id_like_profile = request.GET.get('id_profile', None)
-        action = request.GET.get('action', None)
+        action = request.GET.get('action', 'like')
         if not id_like_profile or not action:
             return Response({'detail': 'Не переданы параметры запроса'}, status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -92,3 +92,10 @@ class LikeAPIView(GenericAPIView):
             return Response({'detail': 'анкета дабавлена в понравившиеся'}, status=status.HTTP_201_CREATED)
         except Exception as ex:
             return Response({'detail': ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
+class MyProfileAPIView(GenericAPIView):
+    pass
+
+
+class MyLikesAPIView(GenericAPIView):
+    pass

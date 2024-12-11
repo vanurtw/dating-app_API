@@ -1,6 +1,7 @@
 from django.template.context_processors import request
 from rest_framework import serializers
 from .models import Profile, Categories, Interests, LikeUser
+from auth_user.serializers import TelegramUserSerializers
 
 
 class InterestSerializer(serializers.ModelSerializer):
@@ -19,6 +20,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     interests = InterestSerializer(many=True)
     city = serializers.SerializerMethodField()
     reciprocity = serializers.SerializerMethodField()
+    user_teleg = TelegramUserSerializers()
 
     def get_city(self, obj):
         return obj.city.title
@@ -30,4 +32,5 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['id', 'gender', 'city', 'description', 'interests', 'films', 'books', 'reciprocity', 'create_date']
+        fields = ['id', 'gender', 'age', 'city', 'description', 'films', 'books', 'reciprocity', 'user_teleg',
+                  'interests', 'create_date']
