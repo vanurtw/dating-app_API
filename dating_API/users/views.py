@@ -3,12 +3,14 @@ from django.template.context_processors import request
 from rest_framework.generics import GenericAPIView
 from rest_framework import permissions, status
 from rest_framework.response import Response
+
 from .models import Profile, LikeUser
 from .serializers import ProfileSerializer
 import random
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from auth_user.serializers import TelegramUserSerializers
 
 
 # Create your views here.
@@ -93,9 +95,19 @@ class LikeAPIView(GenericAPIView):
         except Exception as ex:
             return Response({'detail': ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class MyProfileAPIView(GenericAPIView):
     pass
 
 
-class MyLikesAPIView(GenericAPIView):
-    pass
+class MyMatchesAPIView(GenericAPIView):
+    serializer_class = TelegramUserSerializers
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user_likes = request.user.user_teleg_likes.all()
+        user_to_like = request.user.profile_user_teleg.user_profile_likes.all()
+        qs_user_teleg = [i.like_profile.user_teleg for i in user_likes]
+        qs = user_to_like.filter(user_teleg__in=qs_user_teleg)
+        serializer = self.get_serializer([i.user_teleg for i in qs], many=True)
+        return Response(serializer.data)
