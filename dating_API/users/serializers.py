@@ -1,5 +1,6 @@
+from django.template.context_processors import request
 from rest_framework import serializers
-from .models import Profile, Categories, Interests
+from .models import Profile, Categories, Interests, LikeUser
 
 
 class InterestSerializer(serializers.ModelSerializer):
@@ -17,11 +18,16 @@ class InterestSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     interests = InterestSerializer(many=True)
     city = serializers.SerializerMethodField()
-
+    reciprocity = serializers.SerializerMethodField()
 
     def get_city(self, obj):
         return obj.city.title
 
+    def get_reciprocity(self, obj, *args, **kwargs):
+        user_teleg = self.context.get('user_teleg')
+        likes = LikeUser.objects.filter(user_teleg=user_teleg, like_profile=obj)
+        return likes.exists()
+
     class Meta:
         model = Profile
-        fields = ['id', 'gender', 'city', 'description', 'interests', 'films', 'books', 'create_date']
+        fields = ['id', 'gender', 'city', 'description', 'interests', 'films', 'books', 'reciprocity', 'create_date']

@@ -58,11 +58,13 @@ class FormAPIView(GenericAPIView):
                         break
 
             serializer = self.get_serializer(qs[:10], many=True,
-                                             context={'user_profile_interests': user_profile_interests})
+                                             context={'user_profile_interests': user_profile_interests,
+                                                      'user_teleg': request.user})
             return Response(serializer.data)
 
         profile = query_profile_filter[:10]
-        serializer = self.get_serializer(profile, many=True, context={'user_profile_interests': user_profile_interests})
+        serializer = self.get_serializer(profile, many=True, context={'user_profile_interests': user_profile_interests,
+                                                                      'user_teleg': request.user})
         return Response(serializer.data)
 
 
@@ -87,6 +89,6 @@ class LikeAPIView(GenericAPIView):
                 return Response({'detail': 'Вы уже добавили эту анкету в поравившиеся'},
                                 status=status.HTTP_400_BAD_REQUEST)
             LikeUser.objects.create(user_teleg=request.user, like_profile_id=id_like_profile)
-            return Response({'detail':'анкета дабавлена в понравившиеся'}, status=status.HTTP_201_CREATED)
+            return Response({'detail': 'анкета дабавлена в понравившиеся'}, status=status.HTTP_201_CREATED)
         except Exception as ex:
-            return Response({'detail':ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
