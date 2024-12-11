@@ -12,6 +12,11 @@ class TelegramUser(models.Model):
     is_bot = models.BooleanField('бот', default=False)
     first_name = models.CharField('имя', max_length=100, blank=True, null=True)
     last_name = models.CharField('фамилия', max_length=100, blank=True, null=True)
+    image = models.URLField(
+        'аватарка в телеграмме(url)',
+        blank=True,
+        null=True
+    )
     username = models.CharField('username', max_length=100)
     create_date = models.DateField('дата создания', auto_now_add=True)
 
@@ -106,7 +111,8 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name='city_profiles',
         verbose_name='город',
-        blank=True, null=True
+        blank=True,
+        null=True
     )
     description = models.CharField(
         'описание',

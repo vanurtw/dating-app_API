@@ -11,12 +11,10 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-
-
 # Create your views here.
 
 UserSchema = openapi.Schema(type=openapi.TYPE_OBJECT,
-                           properties={'token': openapi.Schema(description='тоекен', type=openapi.TYPE_STRING)})
+                            properties={'token': openapi.Schema(description='тоекен', type=openapi.TYPE_STRING)})
 
 
 class LoginAPIView(GenericAPIView):
@@ -24,18 +22,15 @@ class LoginAPIView(GenericAPIView):
 
     @swagger_auto_schema(
         responses={
-            201:openapi.Response(description='Токен создан успешно', schema=UserSchema)
+            201: openapi.Response(description='Токен создан успешно', schema=UserSchema)
         }
 
     )
     def post(self, request):
-        try:
-            teleg_user = TelegramUser.objects.get(id_user=request.data.get('id_user'))
-        except ObjectDoesNotExist as ex:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            teleg_user = serializer.save()
-            Profile.objects.create(user_teleg=teleg_user)
+        teleg_user = TelegramUser.objects.filter(id_user=request.data.get('id_user'))
+        serializer = self.get_serializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        teleg_user = serializer.save(data=request.data, teleg_user=teleg_user)
         try:
             token = Token.objects.create(user=teleg_user)
         except IntegrityError as ex:
