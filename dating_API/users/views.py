@@ -1,11 +1,13 @@
+from lib2to3.fixes.fix_input import context
+
 from django.shortcuts import render
 from django.template.context_processors import request
 from rest_framework.generics import GenericAPIView
 from rest_framework import permissions, status
 from rest_framework.response import Response
 
-from .models import Profile, LikeUser, Cities
-from .serializers import ProfileSerializer, MyProfileSerializer, CitiesSerializer
+from .models import Profile, LikeUser, Cities, Categories
+from .serializers import ProfileSerializer, MyProfileSerializer, CitiesSerializer, CategoriesInterestsSerializer
 import random
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
@@ -116,4 +118,15 @@ class CitiesAPIView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         data = Cities.objects.all()
         serializer = self.get_serializer(data, many=True)
+        return Response(serializer.data)
+
+
+class CategoriesAPIView(GenericAPIView):
+    serializer_class = CategoriesInterestsSerializer
+
+    def get(self, request, *args, **kwargs):
+        categories = Categories.objects.all()
+        user_profile_interests = request.user.profile_user_teleg.interests.all()
+        serializer = self.get_serializer(categories, many=True,
+                                         context={'user_profile_interests': user_profile_interests})
         return Response(serializer.data)

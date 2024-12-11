@@ -1,3 +1,5 @@
+from lib2to3.fixes.fix_input import context
+
 from django.template.context_processors import request
 from rest_framework import serializers
 from .models import Profile, Categories, Interests, LikeUser, Cities
@@ -21,8 +23,10 @@ class CitiesSerializer(serializers.ModelSerializer):
         model = Cities
         fields = ['id', 'title', 'slug']
 
+
 class ProfileInterestSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(use_url=False)
+
     class Meta:
         model = Interests
         fields = ['id', 'title', 'image', 'slug']
@@ -51,8 +55,18 @@ class ProfileSerializer(serializers.ModelSerializer):
 class MyProfileSerializer(serializers.ModelSerializer):
     city = CitiesSerializer()
     interests = ProfileInterestSerializer(many=True)
+
     class Meta:
         model = Profile
         fields = ['id', 'gender', 'age', 'city', 'description', 'films', 'books', 'user_teleg',
                   'interests', 'create_date']
         depth = 1
+
+
+class CategoriesInterestsSerializer(serializers.Serializer):
+
+    def to_representation(self, instance):
+        interests = instance.interests_categories.all()
+        user_profile_interests = self.context.get('user_profile_interests')
+        serializer = InterestSerializer(interests, context={'user_profile_interests': user_profile_interests}, many=True)
+        return {instance.title: serializer.data}
