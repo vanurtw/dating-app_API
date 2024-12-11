@@ -5,7 +5,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 
 from .models import Profile, LikeUser
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer, MyProfileSerializer
 import random
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
@@ -97,7 +97,11 @@ class LikeAPIView(GenericAPIView):
 
 
 class MyProfileAPIView(GenericAPIView):
-    pass
+    serializer_class = MyProfileSerializer
+
+    def get(self, request, *args,  **kwargs):
+        serializer = self.get_serializer(request.user.profile_user_teleg)
+        return Response(serializer.data)
 
 
 class MyMatchesAPIView(GenericAPIView):

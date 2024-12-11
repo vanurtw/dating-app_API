@@ -1,6 +1,6 @@
 from django.template.context_processors import request
 from rest_framework import serializers
-from .models import Profile, Categories, Interests, LikeUser
+from .models import Profile, Categories, Interests, LikeUser, Cities
 from auth_user.serializers import TelegramUserSerializers
 
 
@@ -14,6 +14,18 @@ class InterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interests
         fields = ['title', 'image', 'slug', 'coincidence']
+
+
+class CitiesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cities
+        fields = ['id', 'title', 'slug']
+
+class ProfileInterestSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=False)
+    class Meta:
+        model = Interests
+        fields = ['id', 'title', 'image', 'slug']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -34,3 +46,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['id', 'gender', 'age', 'city', 'description', 'films', 'books', 'reciprocity', 'user_teleg',
                   'interests', 'create_date']
+
+
+class MyProfileSerializer(serializers.ModelSerializer):
+    city = CitiesSerializer()
+    interests = ProfileInterestSerializer(many=True)
+    class Meta:
+        model = Profile
+        fields = ['id', 'gender', 'age', 'city', 'description', 'films', 'books', 'user_teleg',
+                  'interests', 'create_date']
+        depth = 1
