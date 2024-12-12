@@ -60,7 +60,19 @@ class MyProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['id', 'gender', 'age', 'city', 'description', 'films', 'books', 'user_teleg',
                   'interests', 'create_date']
-        depth = 1
+
+
+    def save(self, *args, **kwargs):
+        instance = self.instance
+        data = self.validated_data
+        try:
+            city = data.pop('city')
+            interests = data.pop('interests')
+            instance.interests.set(interests)
+            instance.city = city
+        except KeyError:
+            pass
+        return super().save(**kwargs)
 
 
 class CategoriesInterestsSerializer(serializers.Serializer):
@@ -68,5 +80,6 @@ class CategoriesInterestsSerializer(serializers.Serializer):
     def to_representation(self, instance):
         interests = instance.interests_categories.all()
         user_profile_interests = self.context.get('user_profile_interests')
-        serializer = InterestSerializer(interests, context={'user_profile_interests': user_profile_interests}, many=True)
+        serializer = InterestSerializer(interests, context={'user_profile_interests': user_profile_interests},
+                                        many=True)
         return {instance.title: serializer.data}

@@ -27,6 +27,8 @@ class LoginAPIView(GenericAPIView):
 
     )
     def post(self, request):
+        if not request.data.get('username'):
+            return Response({"detail": "username обязательное поле"}, status=status.HTTP_400_BAD_REQUEST)
         teleg_user = TelegramUser.objects.filter(id_user=request.data.get('id_user'))
         serializer = self.get_serializer(data=request.data)
         # serializer.is_valid(raise_exception=True)

@@ -98,6 +98,17 @@ class MyProfileAPIView(GenericAPIView):
         serializer = self.get_serializer(request.user.profile_user_teleg)
         return Response(serializer.data)
 
+    def patch(self, request, *args, **kwargs):
+        instance = request.user.profile_user_teleg
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        # self.perform_update(serializer)
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save(serializer)
+
 
 class MyMatchesAPIView(GenericAPIView):
     serializer_class = TelegramUserSerializers
