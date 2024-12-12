@@ -12,8 +12,9 @@ class TelegramUser(models.Model):
     is_bot = models.BooleanField('бот', default=False)
     first_name = models.CharField('имя', max_length=100, blank=True, null=True)
     last_name = models.CharField('фамилия', max_length=100, blank=True, null=True)
-    image = models.URLField(
+    image = models.CharField(
         'аватарка в телеграмме(url)',
+        max_length=700,
         blank=True,
         null=True
     )
