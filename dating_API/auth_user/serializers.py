@@ -14,6 +14,6 @@ class TelegramUserSerializers(serializers.ModelSerializer):
             instance = teleg_user.update(**kwargs.get('data'))
             return teleg_user[0]
         else:
-            instance = TelegramUser.objects.create(**kwargs.get('data').dict())
+            instance = TelegramUser.objects.create(**kwargs.get('data'))
             Profile.objects.create(user_teleg=instance)
             return instance
